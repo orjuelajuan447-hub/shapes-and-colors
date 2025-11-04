@@ -1,0 +1,414 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Shapes and Colors Challenge (Grade 3)</title>
+    <!-- Load Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                    },
+                    colors: {
+                        'primary': '#4f46e5',
+                        'secondary': '#10b981',
+                        'accent': '#f59e0b',
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        /* General styling for interactivity feedback */
+        .activity-card {
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+            transition: transform 0.2s;
+        }
+        .activity-card:hover {
+            transform: translateY(-2px);
+        }
+        .letter-cell {
+            cursor: pointer;
+            user-select: none;
+            transition: background-color 0.15s, color 0.15s;
+        }
+        .letter-cell:hover:not(.highlighted) {
+            background-color: #f3f4f6; /* Tailwind gray-100 */
+        }
+        .highlighted {
+            background-color: #f59e0b !important; /* Tailwind accent */
+            color: white;
+            font-weight: bold;
+        }
+        .correct-answer {
+            background-color: #10b981 !important; /* Tailwind secondary */
+            color: white;
+        }
+        /* Styles for the message box */
+        #messageBox {
+            visibility: hidden;
+            opacity: 0;
+            transition: visibility 0s, opacity 0.5s linear;
+        }
+        #messageBox.show {
+            visibility: visible;
+            opacity: 1;
+        }
+    </style>
+</head>
+<body class="bg-gray-50 font-sans text-gray-800 p-4 md:p-8">
+
+    <!-- Sticky Message Box (Replaces alert()) -->
+    <div id="messageBox" class="fixed top-4 right-4 z-50 p-4 rounded-lg shadow-xl text-white md:max-w-sm"
+        role="alert">
+        <p id="messageText" class="font-medium"></p>
+    </div>
+
+    <!-- Header Section -->
+    <header class="text-center mb-10">
+        <h1 class="text-5xl font-extrabold text-primary mb-2">Shapes and Colors Adventure!</h1>
+        <p class="text-xl text-gray-600">A fun learning challenge for Grade 3 students.</p>
+    </header>
+
+    <!-- Main Activities Grid -->
+    <main class="grid grid-cols-1 lg:grid-cols-3 gap-8 max-w-7xl mx-auto">
+
+        <!-- Activity 1: Quiz -->
+        <div id="quiz-card" class="activity-card bg-white p-6 rounded-xl border-t-4 border-primary">
+            <h2 class="text-3xl font-bold text-primary mb-4 flex items-center">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01" />
+                </svg>
+                1. Shapes & Colors Quiz
+            </h2>
+            <div id="quiz-questions">
+                <!-- Question 1 -->
+                <div class="mb-4">
+                    <p class="font-semibold text-lg mb-2">1. A stop sign usually has what shape?</p>
+                    <div class="flex flex-col space-y-2">
+                        <label class="block cursor-pointer bg-gray-100 hover:bg-primary hover:text-white p-3 rounded-lg transition duration-150">
+                            <input type="radio" name="q1" value="triangle" class="mr-2 accent-primary"> Triangle
+                        </label>
+                        <label class="block cursor-pointer bg-gray-100 hover:bg-primary hover:text-white p-3 rounded-lg transition duration-150">
+                            <input type="radio" name="q1" value="octagon" class="mr-2 accent-primary"> Octagon
+                        </label>
+                        <label class="block cursor-pointer bg-gray-100 hover:bg-primary hover:text-white p-3 rounded-lg transition duration-150">
+                            <input type="radio" name="q1" value="square" class="mr-2 accent-primary"> Square
+                        </label>
+                    </div>
+                </div>
+
+                <!-- Question 2 -->
+                <div class="mb-4">
+                    <p class="font-semibold text-lg mb-2">2. What color do you get when you mix blue and yellow?</p>
+                    <div class="flex flex-col space-y-2">
+                        <label class="block cursor-pointer bg-gray-100 hover:bg-primary hover:text-white p-3 rounded-lg transition duration-150">
+                            <input type="radio" name="q2" value="orange" class="mr-2 accent-primary"> Orange
+                        </label>
+                        <label class="block cursor-pointer bg-gray-100 hover:bg-primary hover:text-white p-3 rounded-lg transition duration-150">
+                            <input type="radio" name="q2" value="red" class="mr-2 accent-primary"> Red
+                        </label>
+                        <label class="block cursor-pointer bg-gray-100 hover:bg-primary hover:text-white p-3 rounded-lg transition duration-150">
+                            <input type="radio" name="q2" value="green" class="mr-2 accent-primary"> Green
+                        </label>
+                    </div>
+                </div>
+            </div>
+            <button onclick="checkQuiz()" class="mt-4 w-full bg-primary text-white font-bold py-3 rounded-xl hover:bg-indigo-700 transition duration-300 transform hover:scale-[1.01]">
+                Check Answers
+            </button>
+            <p id="quiz-result" class="text-center mt-3 text-lg font-bold"></p>
+        </div>
+
+        <!-- Activity 2: Word Search -->
+        <div class="activity-card bg-white p-6 rounded-xl border-t-4 border-secondary">
+            <h2 class="text-3xl font-bold text-secondary mb-4 flex items-center">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                </svg>
+                2. Shapes Word Search
+            </h2>
+            <p class="text-sm text-gray-600 mb-4">Find the hidden shape words in the grid!</p>
+            <div id="word-search-grid" class="grid gap-1 mb-4" style="grid-template-columns: repeat(7, 1fr);">
+                <!-- Grid will be populated by JS -->
+            </div>
+            <p id="words-to-find" class="text-lg font-semibold text-gray-700">Words to find: <span id="word-list" class="font-normal text-accent">CIRCLE, OVAL, STAR, CUBE</span></p>
+            <p id="search-result" class="text-center mt-3 text-lg font-bold"></p>
+            <button onclick="checkWordSearch()" class="mt-4 w-full bg-secondary text-white font-bold py-3 rounded-xl hover:bg-emerald-700 transition duration-300 transform hover:scale-[1.01]">
+                Check Progress
+            </button>
+        </div>
+
+        <!-- Activity 3: Crossword Puzzle -->
+        <div class="activity-card bg-white p-6 rounded-xl border-t-4 border-accent">
+            <h2 class="text-3xl font-bold text-accent mb-4 flex items-center">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 10h16M4 14h16M4 18h16" />
+                </svg>
+                3. Colors Crossword
+            </h2>
+            <div id="crossword-container" class="space-y-4">
+                <div class="p-3 bg-gray-100 rounded-lg">
+                    <h3 class="font-bold text-lg mb-2">ACROSS</h3>
+                    <p class="text-sm text-gray-600">1. The color of ripe bananas and the sun.</p>
+                    <input type="text" id="crossword-across-1" class="w-full mt-1 p-2 border border-gray-300 rounded-lg focus:ring-accent focus:border-accent uppercase" placeholder="4 letters">
+                </div>
+                <div class="p-3 bg-gray-100 rounded-lg">
+                    <h3 class="font-bold text-lg mb-2">DOWN</h3>
+                    <p class="text-sm text-gray-600">2. The color of Santa's suit.</p>
+                    <input type="text" id="crossword-down-2" class="w-full mt-1 p-2 border border-gray-300 rounded-lg focus:ring-accent focus:border-accent uppercase" placeholder="3 letters">
+                </div>
+                <div class="p-3 bg-gray-100 rounded-lg">
+                    <p class="text-sm text-gray-600">3. A primary color, often seen in the sky.</p>
+                    <input type="text" id="crossword-down-3" class="w-full mt-1 p-2 border border-gray-300 rounded-lg focus:ring-accent focus:border-accent uppercase" placeholder="4 letters">
+                </div>
+            </div>
+            <button onclick="checkCrossword()" class="mt-4 w-full bg-accent text-white font-bold py-3 rounded-xl hover:bg-amber-600 transition duration-300 transform hover:scale-[1.01]">
+                Check Crossword
+            </button>
+            <p id="crossword-result" class="text-center mt-3 text-lg font-bold"></p>
+        </div>
+
+    </main>
+
+    <script>
+        // --- Utility Functions ---
+
+        /**
+         * Custom message box to replace alert().
+         * @param {string} message - The message to display.
+         * @param {string} type - 'success', 'error', or 'info'.
+         */
+        function showMessage(message, type = 'info') {
+            const box = document.getElementById('messageBox');
+            const text = document.getElementById('messageText');
+
+            let bgColor = 'bg-gray-600';
+            if (type === 'success') bgColor = 'bg-secondary'; // Green
+            if (type === 'error') bgColor = 'bg-red-500';
+            if (type === 'info') bgColor = 'bg-primary'; // Indigo
+
+            box.className = `fixed top-4 right-4 z-50 p-4 rounded-lg shadow-xl text-white md:max-w-sm ${bgColor} show`;
+            text.textContent = message;
+
+            // Automatically hide after 4 seconds
+            setTimeout(() => {
+                box.classList.remove('show');
+            }, 4000);
+        }
+
+        // --- 1. Quiz Logic ---
+
+        const quizAnswers = {
+            q1: 'octagon',
+            q2: 'green'
+        };
+
+        function checkQuiz() {
+            let score = 0;
+            const totalQuestions = Object.keys(quizAnswers).length;
+
+            for (const q in quizAnswers) {
+                const selected = document.querySelector(`input[name="${q}"]:checked`);
+                const correctAnswer = quizAnswers[q];
+
+                // Clear previous highlights
+                document.querySelectorAll(`input[name="${q}"]`).forEach(input => {
+                    const label = input.closest('label');
+                    label.classList.remove('correct-answer', 'bg-red-100');
+                    label.classList.add('bg-gray-100');
+                });
+
+                if (selected) {
+                    const label = selected.closest('label');
+                    if (selected.value === correctAnswer) {
+                        score++;
+                        label.classList.add('correct-answer');
+                        label.classList.remove('bg-gray-100', 'hover:bg-primary', 'hover:text-white');
+                    } else {
+                        label.classList.add('bg-red-100');
+                        label.classList.remove('bg-gray-100', 'hover:bg-primary', 'hover:text-white');
+
+                        // Highlight the correct answer
+                        document.querySelector(`input[name="${q}"][value="${correctAnswer}"]`).closest('label').classList.add('correct-answer');
+                    }
+                }
+            }
+
+            const resultElement = document.getElementById('quiz-result');
+            resultElement.textContent = `You scored ${score} out of ${totalQuestions}!`;
+
+            if (score === totalQuestions) {
+                showMessage("Great job! You got all the Quiz answers correct!", 'success');
+                resultElement.classList.add('text-secondary');
+            } else {
+                showMessage(`Keep trying! You need ${totalQuestions - score} more correct answers.`, 'info');
+                resultElement.classList.remove('text-secondary');
+                resultElement.classList.add('text-red-500');
+            }
+        }
+
+
+        // --- 2. Word Search Logic (Simplified) ---
+
+        const searchGridData = [
+            ['R', 'C', 'I', 'R', 'C', 'L', 'E'],
+            ['E', 'U', 'X', 'T', 'G', 'F', 'S'],
+            ['D', 'B', 'W', 'P', 'R', 'Z', 'T'],
+            ['S', 'V', 'K', 'L', 'E', 'A', 'A'],
+            ['T', 'O', 'V', 'A', 'L', 'I', 'R'],
+            ['A', 'J', 'S', 'H', 'P', 'N', 'M'],
+            ['R', 'T', 'Z', 'Y', 'C', 'X', 'C']
+        ];
+        const searchWords = ['CIRCLE', 'OVAL', 'STAR', 'CUBE'];
+        let highlightedCells = new Set();
+        let foundWords = new Set();
+        const gridElement = document.getElementById('word-search-grid');
+        gridElement.style.gridTemplateColumns = `repeat(${searchGridData[0].length}, 1fr)`;
+
+        // Function to create and render the grid
+        function renderWordSearch() {
+            gridElement.innerHTML = '';
+            searchGridData.forEach((row, rowIndex) => {
+                row.forEach((letter, colIndex) => {
+                    const cell = document.createElement('div');
+                    cell.textContent = letter;
+                    cell.className = 'letter-cell aspect-square flex items-center justify-center border border-gray-200 rounded-sm text-lg font-mono uppercase';
+                    cell.dataset.row = rowIndex;
+                    cell.dataset.col = colIndex;
+                    cell.dataset.index = `${rowIndex}-${colIndex}`;
+                    cell.onclick = toggleCellHighlight;
+                    gridElement.appendChild(cell);
+                });
+            });
+        }
+
+        function toggleCellHighlight(event) {
+            const cell = event.target;
+            const index = cell.dataset.index;
+
+            if (highlightedCells.has(index)) {
+                highlightedCells.delete(index);
+                cell.classList.remove('highlighted');
+            } else {
+                highlightedCells.add(index);
+                cell.classList.add('highlighted');
+            }
+        }
+
+        function checkWordSearch() {
+            let progress = foundWords.size;
+            const totalWords = searchWords.length;
+
+            // Simplified check: only check if the entire word has been correctly highlighted
+            // For a real game, this would involve complex path tracing.
+            // Here, we check for the *entire* word in the highlighted set.
+
+            // Since this is simplified, we'll manually check two simple words based on index:
+            const predefinedSolutions = {
+                'STAR': ['2-6', '3-6', '4-6', '5-6'], // Vertical STAR
+                'CIRCLE': ['0-0', '0-1', '0-2', '0-3', '0-4', '0-5', '0-6'] // Horizontal CIRCLE
+            };
+
+            let newlyFound = 0;
+
+            for (const word in predefinedSolutions) {
+                if (!foundWords.has(word)) {
+                    const solutionIndices = predefinedSolutions[word];
+                    const isFound = solutionIndices.every(index => highlightedCells.has(index));
+
+                    if (isFound) {
+                        foundWords.add(word);
+                        newlyFound++;
+                        // Visually mark the correct cells
+                        solutionIndices.forEach(index => {
+                            const cell = document.querySelector(`[data-index="${index}"]`);
+                            if(cell) {
+                                cell.classList.remove('highlighted');
+                                cell.classList.add('correct-answer');
+                                cell.onclick = null; // Disable further clicking
+                            }
+                        });
+                        showMessage(`You found the word: ${word}!`, 'success');
+                    }
+                }
+            }
+
+            const currentProgress = foundWords.size;
+            const resultElement = document.getElementById('search-result');
+            resultElement.textContent = `Words found: ${currentProgress} of ${totalWords}.`;
+
+            if (currentProgress === totalWords) {
+                showMessage("Amazing! You found all the words!", 'success');
+            } else if (newlyFound > 0) {
+                // Update remaining words display
+                const remainingWords = searchWords.filter(w => !foundWords.has(w)).join(', ');
+                document.getElementById('word-list').textContent = remainingWords;
+            } else {
+                showMessage("Keep looking! Highlight the letters and try checking again.", 'info');
+            }
+
+            // After checking, clear current highlights that didn't form a correct word
+            highlightedCells.clear();
+            document.querySelectorAll('.letter-cell').forEach(cell => {
+                if (!cell.classList.contains('correct-answer')) {
+                    cell.classList.remove('highlighted');
+                }
+            });
+        }
+
+
+        // --- 3. Crossword Logic ---
+
+        const crosswordAnswers = {
+            'crossword-across-1': 'YELLOW', // 6 letters
+            'crossword-down-2': 'RED',      // 3 letters
+            'crossword-down-3': 'BLUE'      // 4 letters
+        };
+
+        function checkCrossword() {
+            let correctCount = 0;
+            const totalItems = Object.keys(crosswordAnswers).length;
+
+            for (const id in crosswordAnswers) {
+                const input = document.getElementById(id);
+                const userAnswer = input.value.trim().toUpperCase();
+                const correctAnswer = crosswordAnswers[id];
+
+                // Remove previous feedback classes
+                input.classList.remove('border-secondary', 'border-red-500', 'bg-red-50');
+                input.classList.add('border-gray-300');
+
+                if (userAnswer === correctAnswer) {
+                    correctCount++;
+                    input.classList.add('border-secondary');
+                } else if (userAnswer.length > 0) {
+                    input.classList.add('border-red-500', 'bg-red-50');
+                }
+            }
+
+            const resultElement = document.getElementById('crossword-result');
+            resultElement.textContent = `You solved ${correctCount} out of ${totalItems} clues!`;
+
+            if (correctCount === totalItems) {
+                showMessage("The Crossword is complete! Excellent knowledge of colors!", 'success');
+                resultElement.classList.add('text-secondary');
+            } else {
+                showMessage("Check the clues you missed and try again!", 'error');
+                resultElement.classList.remove('text-secondary');
+                resultElement.classList.add('text-red-500');
+            }
+        }
+
+        // Initialize activities on load
+        window.onload = () => {
+            renderWordSearch();
+        };
+
+    </script>
+</body>
+</html>
